@@ -72,6 +72,9 @@ class CaesarConsole(cmd.Cmd):
             print("No tool is currently selected.")
         else:
             print("Deselected tool: " + self.current_tool)
+            tool_options = self.tools[self.current_tool]["options"]
+            for option_name in tool_options:
+                tool_options[option_name]["value"] = None
             self.current_tool = None
             self.prompt = 'caesar > '
 
