@@ -3,7 +3,7 @@
     "description": "Bismarck service banner grabber",
     "entry": "bismarck_wrapper.sh",
     "options": {
-        "TARGRT": {
+        "TARGET": {
             "required": true
         },
         "PORT": {
