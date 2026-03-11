@@ -1,41 +1,25 @@
 import cmd
+import subprocess
+from module_loader import load_modules
 
 class CaesarConsole(cmd.Cmd):
     intro = "Welcome to the Caesar Operator Console. Type help to list commands.\n"
     prompt = 'caesar > '
-    
-    tools = {
-        "bismarck": {
-            "description": "Bismarck service banner grabber",
-            "options": {
-                
-            }
-        },
-        "napoleon": {
-            "description": "Napoleon DNS Zone Transfer checker",
-            "options": {
-                "DOMAIN": {
-                    "value": None,
-                    "required": True
-                }
-            }
-        },
-        "judas": {
-            "description": "Judas flag keyword Source Code grabber from directories",
-            "options": {
-                
-            }
-        }
-    }
+
+    def __init__(self):
+        super().__init__()
+        self.tools = load_modules()
 
     current_tool = None
-
 
     def check_if_tool_selected(self):
         if self.current_tool is None:
             print("No tool is currently selected. Use 'select <tool>' to select a tool.")
             return False
         return True
+
+    def get_current_tool(self):
+        return self.tools[self.current_tool]
 
     def do_help(self, arg):
         print("Available commands:")
@@ -72,7 +56,8 @@ class CaesarConsole(cmd.Cmd):
             print("No tool is currently selected.")
         else:
             print("Deselected tool: " + self.current_tool)
-            tool_options = self.tools[self.current_tool]["options"]
+            tool = self.get_current_tool()
+            tool_options = tool["options"]
             for option_name in tool_options:
                 tool_options[option_name]["value"] = None
             self.current_tool = None
@@ -82,7 +67,8 @@ class CaesarConsole(cmd.Cmd):
         if not self.check_if_tool_selected():
             return False
         print("Options for " + self.current_tool + ":")
-        tool_options = self.tools[self.current_tool]["options"]
+        tool = self.get_current_tool()
+        tool_options = tool["options"]
 
         for option_name, option_info in tool_options.items():
             required = " (required)" if option_info["required"] else ""
@@ -99,17 +85,47 @@ class CaesarConsole(cmd.Cmd):
         if(len(parts) < 2):
             print("Usage: set <option> <value>")
             return False
-        option_name = parts[0]
-        option_value = parts[1]
-        tool_options = self.tools[self.current_tool]["options"]
+        option_name = parts[0].upper()
+        option_value = " ".join(parts[1:])
+        tool_options = self.get_current_tool()["options"]
         if option_name in tool_options:
             tool_options[option_name]["value"] = option_value
             print("Set " + option_name + " to " + option_value)
         else:
             print("Option not found: " + option_name)
             print("Use 'options' command to see available options for the selected tool.")
+    
+    def build_command_string(self, tool):
+        command = []
+        command.append(tool["entry"])
+        for option_value in tool["options"].values():
+            if option_value["value"] is not None:
+                command.append(str(option_value["value"]))
+        return command
 
 
+    def do_run(self, arg):
+        if not self.check_if_tool_selected():
+            return False
+        tool = self.get_current_tool()
+        tool_options = tool["options"]
+        required_unset_options = []
+        for option_name, option_info in tool_options.items():
+            if option_info["required"] and option_info["value"] is None:
+                required_unset_options.append(option_name)
+        if required_unset_options:
+            print("Cannot run tool. Required options are not set:")
+            for option_name in required_unset_options:
+                print(" - " + option_name)
+            return False
+        print("Running " + self.current_tool)
+        print("--------------")
+        for option_name, option_info in tool_options.items():
+            print(option_name + ": " + str(option_info["value"]))
+        print("--------------")
+        command = self.build_command_string(tool)
+        print("Executing:\n" + " ".join(command))
+        subprocess.run(command)
 
 if __name__ == '__main__':
     CaesarConsole().cmdloop()

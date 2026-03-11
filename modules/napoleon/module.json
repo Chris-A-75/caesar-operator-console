@@ -1,0 +1,10 @@
+{
+    "name": "napoleon",
+    "description": "Napoleon DNS Zone Transfer checker",
+    "entry": "napoleon.sh",
+    "options": {
+        "DOMAIN": {
+            "required": true
+        }
+    }
+}
