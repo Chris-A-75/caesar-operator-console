@@ -1,0 +1,13 @@
+{
+    "name": "bismarck",
+    "description": "Bismarck service banner grabber",
+    "entry": "bismarck_wrapper.sh",
+    "options": {
+        "TARGRT": {
+            "required": true
+        },
+        "PORT": {
+            "required": false
+        }
+    }
+}
