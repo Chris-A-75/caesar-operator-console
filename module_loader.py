@@ -36,10 +36,21 @@ def load_modules(modules_dir = "modules"):
         metadata_path = os.path.join(module_path, "module.json") # get path to module.json
         if not os.path.isfile(metadata_path): # if module.json doesn't exist, skip
             continue
-
         with open(metadata_path, "r") as f: # load metadata
             metadata = json.load(f)
         
+        required_fields = ["entry"]
+        missing = [field for field in required_fields if field not in metadata]
+        
+        if missing:
+            print(f"[WARNING] Module '{module_name}' is missing required fields: {missing}. Skipping.")
+            continue
+
+        entry_path = os.path.join(module_path, metadata["entry"])
+        if not os.path.isfile(entry_path):
+            print(f"[WARNING] Entry script '{metadata['entry']}' not found in '{module_name}'. Skipping.")
+            continue
+
         tool = normalize_module(metadata, module_path)
         tools[module_name] = tool
         
