@@ -13,7 +13,8 @@ def normalize_module(metadata, module_path):
         options[option_name] = {
             "required": option_info.get("required", False),
             "value": default,
-            "default": default
+            "default": default,
+            "description": option_info.get("description", "")
         }
 
     return {

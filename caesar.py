@@ -86,6 +86,9 @@ class CaesarConsole(cmd.Cmd):
             required = " (required)" if option_info["required"] else ""
             value = option_info["value"]
             print(f" - {option_name:<30}{value}{required}")
+            description = option_info.get("description", "")
+            if description:
+                print(f"   {description}")
 
     def do_set(self, arg):
         if not self.check_if_tool_selected():
@@ -151,6 +154,9 @@ class CaesarConsole(cmd.Cmd):
             required = " (required)" if option_info["required"] else ""
             value = option_info["value"]
             print(f" - {option_name:<30}{value}{required}")
+            description = option_info.get("description", "")
+            if description:
+                print(f"   {description}")
 
     def do_run(self, arg):
         if not self.check_if_tool_selected():

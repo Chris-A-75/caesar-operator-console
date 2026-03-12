@@ -1,0 +1,18 @@
+{
+    "name": "davinci",
+    "description": "Da Vinci hashcat wrapper for hash cracking",
+    "entry": "davinci.sh",
+    "options": {
+        "HASH": {
+            "required": true,
+            "description": "single hash or path to file containing hashes"
+        },
+        "WORDLIST": {
+            "required": true
+        },
+        "HASH_TYPE": {
+            "required": true,
+            "default": "md5"
+        }
+    }
+}
