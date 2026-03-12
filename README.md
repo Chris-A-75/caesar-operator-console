@@ -23,15 +23,19 @@ Each tool is implemented as a module with a metadata file describing its interfa
 ## Current Modules
 
 ### Bismarck
+
 Service banner grabbing utility that scans ports and attempts to identify services by retrieving their banners.
 
 ### Napoleon
+
 DNS zone transfer tester that attempts to retrieve DNS records from misconfigured name servers.
 
 ### Judas
+
 Directory-based web content scanner that searches for keywords such as flags within discovered resources.
 
 ### SunTzu
+
 Directory and endpoint enumeration tool for discovering hidden paths on web servers using wordlists.
 
 ## Architecture
@@ -85,59 +89,61 @@ python caesar.py
 
 List available tools:
 
-```
+```caesar
 tools
 ```
 
 Select a tool:
 
-```
+```caesar
 select napoleon
 ```
 
 Display required options:
 
-```
+```caesar
 options
 ```
 
 Set option values:
 
-```
+```caesar
 set DOMAIN example.com
 ```
 
 Set option value to blank:
-```
+
+```caesar
 unset PORT
 ```
 
 Run the selected module:
 
-```
+```caesar
 run
 ```
 
 Deselect the current tool:
 
-```
+```caesar
 deselect
 ```
 
 Reset tool settings to default:
-```
+
+```caesar
 reset
 ```
 
 Exit the console:
 
-```
+```caesar
 exit
 ```
 
 ## Directory Structure
 
-```
+```markdown
 caesar/
 │
 ├── caesar.py
@@ -170,18 +176,23 @@ Planned improvements include:
 ## Future Tools in Development
 
 ### Magellan
+
 Subdomain enumeration tool that brute-forces subdomains using DNS queries and wordlists.
 
 ### Hannibal
+
 Network host discovery tool designed to identify live hosts on a network through scanning techniques.
 
 ### Turing
+
 Web technology fingerprinting tool that identifies frameworks and server technologies through HTTP response analysis.
 
 ### Tesla
+
 Packet inspection utility for lightweight network traffic monitoring during reconnaissance.
 
 ### DaVinci
+
 Hash cracking utility that performs dictionary attacks against common hash formats.
 
 ## License
