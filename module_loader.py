@@ -9,9 +9,11 @@ def normalize_module(metadata, module_path):
 
     options = {}
     for option_name, option_info in metadata.get("options", {}).items():
+        default = option_info.get("default", None)
         options[option_name] = {
             "required": option_info.get("required", False),
-            "value": None
+            "value": default,
+            "default": default
         }
 
     return {

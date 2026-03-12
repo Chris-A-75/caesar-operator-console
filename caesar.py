@@ -21,12 +21,24 @@ class CaesarConsole(cmd.Cmd):
     def get_current_tool(self):
         return self.tools[self.current_tool]
 
+    def reset_options(self):
+        tool_options = self.get_current_tool()["options"]
+        for option_info in tool_options.values():
+            option_info["value"] = option_info["default"]
+
     def do_help(self, arg):
         print("Available commands:")
-        print("help - Show this help message")
-        print("tools - List available tools")
-        print("select <tool> - Select a tool")
-        print("exit - Exit the console")
+        print("help              - Show this help message")
+        print("tools             - List available tools")
+        print("select <tool>     - Select a tool")
+        print("deselect          - Deselect current tool")
+        print("options           - Show tool options")
+        print("set <opt> <val>   - Set option value")
+        print("unset <opt>       - Clear option value")
+        print("reset             - Reset options to defaults")
+        print("run               - Execute tool")
+        print("exit              - Exit console")
+
     def do_exit(self, arg):
         print("Exiting the Caesar Operator Console. Goodbye!")
         return True
@@ -57,9 +69,7 @@ class CaesarConsole(cmd.Cmd):
         else:
             print("Deselected tool: " + self.current_tool)
             tool = self.get_current_tool()
-            tool_options = tool["options"]
-            for option_name in tool_options:
-                tool_options[option_name]["value"] = None
+            self.reset_options()
             self.current_tool = None
             self.prompt = 'caesar > '
 
@@ -72,8 +82,8 @@ class CaesarConsole(cmd.Cmd):
 
         for option_name, option_info in tool_options.items():
             required = " (required)" if option_info["required"] else ""
-            print(" - " + option_name + ": " + str(option_info["value"]) + required)
-
+            value = option_info["value"]
+            print(f" - {option_name:<30}{value}{required}")
 
     def do_set(self, arg):
         if not self.check_if_tool_selected():
@@ -95,6 +105,27 @@ class CaesarConsole(cmd.Cmd):
             print("Option not found: " + option_name)
             print("Use 'options' command to see available options for the selected tool.")
     
+    def do_unset(self, arg):
+        if not self.check_if_tool_selected():
+            return False
+        if(arg.strip() == ""):
+            print("Usage: unset <option>")
+            return False
+        option_name = arg.split()[0].upper()
+        tool_options = self.get_current_tool()["options"]
+        if option_name in tool_options:
+            tool_options[option_name]["value"] = None
+            print("Unset " + option_name)
+        else:
+            print("Option not found: " + option_name)
+            print("Use 'options' command to see available options for the selected tool.")
+
+    def do_reset(self, arg):
+        if not self.check_if_tool_selected():
+            return False
+        self.reset_options()
+        print("Reset all options to default values.")
+
     def build_command_string(self, tool):
         command = []
         command.append(tool["entry"])
@@ -125,7 +156,15 @@ class CaesarConsole(cmd.Cmd):
         print("--------------")
         command = self.build_command_string(tool)
         print("Executing:\n" + " ".join(command))
-        subprocess.run(command)
+        try:
+            subprocess.run(command, check=True)
+        except subprocess.CalledProcessError:
+            print("[!] Tool execution failed.")
+        except FileNotFoundError:
+            print("[!] Module entry file not found.")
+        except Exception as e:
+            print(f"[!] An error occurred: {e}")
+            
 
 if __name__ == '__main__':
     CaesarConsole().cmdloop()

@@ -1,0 +1,20 @@
+{
+  "name": "suntzu",
+  "description": "Directory enumeration tool",
+  "entry": "suntzu.py",
+  "options": {
+    "TARGET": {
+        "required": true
+    },
+    "PORT": {
+        "required": true
+    },
+    "WORDLIST": {
+        "required": true
+    },
+    "EXCLUDED_STATUS_CODES": {
+        "required": false,
+        "default": "404"
+    }
+  }
+}
