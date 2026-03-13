@@ -78,6 +78,10 @@ Example:
     "PORT": {
       "required": false,
       "default": "80"
+    },
+    "STATUS_CODES": {
+      "required": false,
+      "flag": "--status-codes"
     }
   }
 }
@@ -86,6 +90,8 @@ Example:
 The console reads this metadata and automatically exposes the module commands.
 
 The `argument_order` field is optional. If present, it tells Caesar the exact order to pass option values to the module entry script. Every option listed in `options` should also appear in `argument_order`.
+
+The `flag` field is optional. If present, Caesar passes the option as a flagged argument such as `--status-codes 200,301` instead of a plain positional value.
 
 ## Basic Usage
 
@@ -131,6 +137,12 @@ Set option value to blank:
 
 ```caesar
 unset PORT
+```
+
+Set optional file extensions for SunTzu:
+
+```caesar
+set EXTENSIONS php,html,txt
 ```
 
 Save the current tool settings:

@@ -14,13 +14,19 @@
     },
     "EXCLUDED_STATUS_CODES": {
         "required": false,
-        "default": "404"
+        "default": "404",
+        "flag": "--exclude-codes"
+    },
+    "EXTENSIONS": {
+        "required": false,
+        "flag": "--extensions"
     }
   },
     "argument_order": [
     "TARGET",
     "PORT",
     "WORDLIST",
-    "EXCLUDED_STATUS_CODES"
+    "EXCLUDED_STATUS_CODES",
+    "EXTENSIONS"
   ]
 }

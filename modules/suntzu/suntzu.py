@@ -31,7 +31,8 @@ def parse_arguments():
     parser.add_argument("TARGET", help="The target URL or IP address")
     parser.add_argument("PORT", help="The target port")
     parser.add_argument("WORDLIST", help="Path to the wordlist file")
-    parser.add_argument("STATUS_CODES_EXCLUDED", nargs='?', default="", help="Status codes to exclude from results separated by commas (e.g., 404,403)")
+    parser.add_argument("--exclude-codes", dest="EXCLUDED_STATUS_CODES", default="", help="Status codes to exclude from results separated by commas (e.g., 404,403)")
+    parser.add_argument("--extensions", dest="EXTENSIONS", default="", help="File extensions to append to each word (e.g., .php,html,js,.txt)")
     return parser.parse_args()
 
 def validate_wordlist(path):
@@ -52,8 +53,25 @@ def validate_port(port):
 def validate_status_codes(codes):
     for code in codes:
         if not code.isdigit() or not (100 <= int(code) <= 599):
-            print(f"Error: invalid status code '{code}' in STATUS_CODES_EXCLUDED")
+            print(f"Error: invalid status code '{code}' in EXCLUDED_STATUS_CODES")
             sys.exit(1)
+
+def validate_extensions(exts):
+    for ext in exts:
+        if ext.strip() == "":
+            print("Error: empty file extension in EXTENSIONS")
+            sys.exit(1)
+
+        clean_ext = ext.lstrip(".")
+
+        if clean_ext == "":
+            print(f"Error: file extension '{ext}' cannot be just a dot in EXTENSIONS")
+            sys.exit(1)
+
+        if not clean_ext.isalnum():
+            print(f"Error: invalid file extension '{ext}' in EXTENSIONS")
+            sys.exit(1)
+
 
 thread_local = threading.local()
 
@@ -110,9 +128,12 @@ def main():
     validate_target(args.TARGET)
     validate_port(args.PORT)
     # transform comma-separated string into list of status codes to exclude
-    status_codes = args.STATUS_CODES_EXCLUDED.split(",") if args.STATUS_CODES_EXCLUDED else []
+    status_codes = args.EXCLUDED_STATUS_CODES.split(",") if args.EXCLUDED_STATUS_CODES else []
     validate_status_codes(status_codes)
     status_codes = [int(code) for code in status_codes]
+    # transform comma-separated string into list of extensions
+    extensions = args.EXTENSIONS.split(",") if args.EXTENSIONS else []
+    validate_extensions(extensions)
 
     counter = 0
     progress_interval = 50
@@ -129,6 +150,9 @@ def main():
             stripped_line = line.strip()
             if stripped_line:
                 lines.append(stripped_line)
+                for ext in extensions:
+                    clean_ext = ext.lstrip(".")
+                    lines.append(f"{stripped_line}.{clean_ext}")
         total = len(lines)
 
     markers = (MARK_SUCCESS, MARK_REDIRECT, MARK_FORBIDDEN, MARK_OTHER)

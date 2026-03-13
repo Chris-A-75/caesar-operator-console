@@ -14,7 +14,8 @@ def normalize_module(metadata, module_path):
             "required": option_info.get("required", False),
             "value": default,
             "default": default,
-            "description": option_info.get("description", "")
+            "description": option_info.get("description", ""),
+            "flag": option_info.get("flag")
         }
 
     argument_order = metadata.get("argument_order", list(options.keys()))

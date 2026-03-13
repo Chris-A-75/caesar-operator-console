@@ -73,8 +73,12 @@ class CaesarConsole(cmd.Cmd):
     def load_saved_settings(self):
         if not os.path.isfile(self.settings_file):
             return {}
-        with open(self.settings_file, "r") as f:
-            return json.load(f)
+        try:
+            with open(self.settings_file, "r") as f:
+                return json.load(f)
+        except json.JSONDecodeError:
+            print("Saved settings file is invalid. Loading empty settings.")
+            return {}
 
     def write_saved_settings(self, data):
         with open(self.settings_file, "w") as f:
@@ -194,9 +198,12 @@ class CaesarConsole(cmd.Cmd):
         command = []
         command.append(tool["entry"])
         for option_name in tool["argument_order"]:
-            option_value = tool["options"][option_name]
-            if option_value["value"] is not None:
-                command.append(str(option_value["value"]))
+            option_info = tool["options"][option_name]
+            if option_info["value"] is None: # if not required and set to none
+                continue
+            if option_info.get("flag"): # either required or not required and set, check if has flag (should be for optional options)
+                command.append(option_info["flag"])
+            command.append(str(option_info["value"]))
         return command
 
     def do_info(self, arg):
