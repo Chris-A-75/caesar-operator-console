@@ -38,6 +38,10 @@ Directory-based web content scanner that searches for keywords such as flags wit
 
 Directory and endpoint enumeration tool for discovering hidden paths on web servers using wordlists.
 
+### DaVinci
+
+Hash cracking utility that performs dictionary attacks against common hash formats.
+
 ## Architecture
 
 Caesar follows a modular architecture composed of the following components:
@@ -168,7 +172,6 @@ caesar/
 Planned improvements include:
 
 - Tab completion for commands and options
-- Module information command
 - Argument ordering support
 - Improved output formatting
 - Additional reconnaissance modules
@@ -190,10 +193,6 @@ Web technology fingerprinting tool that identifies frameworks and server technol
 ### Tesla
 
 Packet inspection utility for lightweight network traffic monitoring during reconnaissance.
-
-### DaVinci
-
-Hash cracking utility that performs dictionary attacks against common hash formats.
 
 ## License
 
