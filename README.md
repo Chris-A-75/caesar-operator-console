@@ -43,6 +43,10 @@ Directory and endpoint enumeration tool for discovering hidden paths on web serv
 
 Hash cracking utility that performs dictionary attacks against common hash formats.
 
+### Turing
+
+Web technology fingerprinting tool that inspects HTTP response headers and body content to identify likely server software and runtimes. Turing also extracts version information from matching headers when it is present.
+
 ## Architecture
 
 Caesar follows a modular architecture composed of the following components:
@@ -218,7 +222,9 @@ caesar/
     ├── napoleon/
     ├── judas/
     ├── bismarck/
-    └── suntzu/
+    ├── suntzu/
+    ├── davinci/
+    └── turing/
 ```
 
 ## Design Goals
@@ -249,10 +255,6 @@ Subdomain enumeration tool that brute-forces subdomains using DNS queries and wo
 ### Hannibal
 
 Network host discovery tool designed to identify live hosts on a network through scanning techniques.
-
-### Turing
-
-Web technology fingerprinting tool that identifies frameworks and server technologies through HTTP response analysis.
 
 ### Tesla
 
