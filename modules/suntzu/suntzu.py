@@ -15,7 +15,7 @@ RED = "\033[31m"
 BLUE = "\033[36m"
 RESET = "\033[0m"
 
-STATUS_WIDTH = 6
+STATUS_WIDTH = 8
 
 MARK_SUCCESS = f"{GREEN}[+]{RESET}"
 MARK_REDIRECT = f"{YELLOW}[~]{RESET}"
@@ -23,6 +23,16 @@ MARK_FORBIDDEN = f"{BLUE}[!]{RESET}"
 MARK_OTHER = f"{RED}[-]{RESET}"
 
 MAX_THREADS = 20
+
+SUMMARY_LABELS = {
+    "success": "200 responses",
+    "redirect": "Redirects",
+    "forbidden": "403 responses",
+    "other": "Other responses",
+    "filtered": "Filtered responses",
+    "timeout": "Timeouts",
+    "error": "Errors"
+}
 
 
 
@@ -95,16 +105,20 @@ def scan_directory(base_url, directory, status_codes, STATUS_WIDTH, markers):
         response = session.get(url, timeout = 3, allow_redirects = False)
 
         if response.status_code in status_codes:
-            return
+            return "filtered"
     
         if response.status_code == 200:
             marker = MARK_SUCCESS
+            result = "success"
         elif 300 <= response.status_code < 400:
             marker = MARK_REDIRECT
+            result = "redirect"
         elif response.status_code == 403:
             marker = MARK_FORBIDDEN
+            result = "forbidden"
         else:
             marker = MARK_OTHER
+            result = "other"
 
         location = response.headers.get("Location", "")
         with print_lock:
@@ -112,14 +126,17 @@ def scan_directory(base_url, directory, status_codes, STATUS_WIDTH, markers):
                 print(f"{marker} {response.status_code:<{STATUS_WIDTH}}{directory} -> {location}")
             else:
                 print(f"{marker} {response.status_code:<{STATUS_WIDTH}}{directory}")
+        return result
 
     except requests.exceptions.Timeout:
         with print_lock:
             print(f"{MARK_OTHER} {'TIMEOUT':<{STATUS_WIDTH}}{directory}")
+        return "timeout"
 
     except requests.exceptions.RequestException:
         with print_lock:
             print(f"{MARK_OTHER} {'ERROR':<{STATUS_WIDTH}}{directory}")
+        return "error"
 
 
 def main():
@@ -137,6 +154,15 @@ def main():
 
     counter = 0
     progress_interval = 50
+    summary_counts = {
+        "success": 0,
+        "redirect": 0,
+        "forbidden": 0,
+        "other": 0,
+        "filtered": 0,
+        "timeout": 0,
+        "error": 0
+    }
 
     base_url = f"{args.TARGET.rstrip('/')}:{args.PORT}"
     
@@ -168,14 +194,20 @@ def main():
         futures = [
             executor.submit(scan_directory, base_url, directory, status_codes, STATUS_WIDTH, markers) for directory in lines
         ]
-        for _ in concurrent.futures.as_completed(futures):
+        for future in concurrent.futures.as_completed(futures):
             counter += 1
+            result = future.result()
+            summary_counts[result] += 1
 
             if counter % progress_interval == 0:
                 with print_lock:
                     print(f"Progress: {counter}/{total}")
 
     print("Directory enumeration completed.")
+    print("Summary:")
+    print(f"{'Total requests':<20}{counter}")
+    for result_name, label in SUMMARY_LABELS.items():
+        print(f"{label:<20}{summary_counts[result_name]}")
     print(f"Progress: {counter}/{total}")
 
 if __name__ == "__main__":

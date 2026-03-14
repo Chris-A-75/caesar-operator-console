@@ -37,7 +37,7 @@ Directory-based web content scanner that searches for keywords such as flags wit
 
 ### SunTzu
 
-Directory and endpoint enumeration tool for discovering hidden paths on web servers using wordlists.
+Directory and endpoint enumeration tool for discovering hidden paths on web servers using wordlists. Supports optional file extensions and prints a final summary of scan results.
 
 ### DaVinci
 
@@ -146,6 +146,8 @@ Set optional file extensions for SunTzu:
 ```caesar
 set EXTENSIONS php,html,txt
 ```
+
+SunTzu prints a final summary after the scan showing total requests and grouped result counts.
 
 Save the current tool settings:
 
