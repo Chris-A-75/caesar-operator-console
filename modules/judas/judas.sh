@@ -23,13 +23,19 @@ usage() {
     echo "Usage: $0 [options] <IP_ADDRESS>"
     echo "-h: open the help page"
     echo "-f: specify the file containing the list of directories (one directory per line)"
+    echo "-k: specify the keyword to search for"
+    echo "-s: specify the scheme to use (http or https)"
     exit 1
 }
 
-while getopts 'hf:' flag; do
+scheme="http"
+
+while getopts 'hf:k:s:' flag; do
         case "$flag" in
         h) usage ;;
         f) file="$OPTARG" ;;
+        k) keyword="$OPTARG" ;;
+        s) scheme="$OPTARG" ;;
         *) usage ;;
         esac
 done
@@ -56,11 +62,23 @@ if [ ! -f "$file" ]; then
     exit 1
 fi
 
+if [ -z "$keyword" ]; then
+    echo "Error: No keyword provided."
+    usage
+    exit 1
+fi
+
+if [ "$scheme" != "http" ] && [ "$scheme" != "https" ]; then
+    echo "Error: Invalid scheme. Use http or https."
+    usage
+    exit 1
+fi
+
 while IFS= read -r line; do
-    url="http://$address/$line"
-    response=$(curl -s "$url" | grep -io "flag[^<]*") # will continue until it encounters "<"
+    url="$scheme://$address/$line"
+    response=$(curl -s "$url" | grep -iF "$keyword")
     if [ -n "$response" ]; then
-        echo "Flag found at: $url"
+        echo "Keyword found at: $url"
         echo "Response: $response"
     fi
 done < "$file"

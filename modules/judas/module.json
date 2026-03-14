@@ -11,11 +11,20 @@
         },
         "FILE": {
             "required": true
+        },
+        "KEYWORD": {
+            "required": true
+        },
+        "SCHEME": {
+            "required": false,
+            "default": "http"
         }
     },
         "argument_order": [
         "HOST",
         "PORT",
-        "FILE"
+        "FILE",
+        "KEYWORD",
+        "SCHEME"
     ]
 }
