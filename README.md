@@ -93,6 +93,8 @@ The `argument_order` field is optional. If present, it tells Caesar the exact or
 
 The `flag` field is optional. If present, Caesar passes the option as a flagged argument such as `--status-codes 200,301` instead of a plain positional value.
 
+If an option should start unset, leave out the `default` field. Avoid using empty or whitespace-only strings as default values. Caesar treats those defaults as unset and prints a warning when loading the module.
+
 ## Basic Usage
 
 Start the console:

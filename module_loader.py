@@ -8,8 +8,12 @@ def normalize_module(metadata, module_path):
     entry_path = os.path.join(module_path, metadata["entry"])
 
     options = {}
+    module_name = metadata.get("name", os.path.basename(module_path))
     for option_name, option_info in metadata.get("options", {}).items():
         default = option_info.get("default", None)
+        if isinstance(default, str) and default.strip() == "":
+            print(f"[WARNING] Module '{module_name}' option '{option_name}' has an empty or whitespace-only string default. Treating it as unset.")
+            default = None
         options[option_name] = {
             "required": option_info.get("required", False),
             "value": default,
