@@ -93,6 +93,17 @@ def get_session() :
     return thread_local.session
 
 
+def add_scan_target(scan_targets, seen_targets, candidate):
+    if candidate not in seen_targets:
+        seen_targets.add(candidate)
+        scan_targets.append(candidate)
+
+
+def has_file_extension(path):
+    last_segment = path.rsplit("/", 1)[-1]
+    return "." in last_segment
+
+
 
 def scan_directory(base_url, directory, status_codes, STATUS_WIDTH, markers):
     url = f"{base_url}/{directory}"
@@ -172,13 +183,15 @@ def main():
     with open(args.WORDLIST, 'r') as wordlist:
         # remove empty lines and strip whitespces
         lines = []
+        seen_targets = set()
         for line in wordlist:
             stripped_line = line.strip()
             if stripped_line:
-                lines.append(stripped_line)
-                for ext in extensions:
-                    clean_ext = ext.lstrip(".")
-                    lines.append(f"{stripped_line}.{clean_ext}")
+                add_scan_target(lines, seen_targets, stripped_line)
+                if not has_file_extension(stripped_line):
+                    for ext in extensions:
+                        clean_ext = ext.lstrip(".")
+                        add_scan_target(lines, seen_targets, f"{stripped_line}.{clean_ext}")
         total = len(lines)
 
     markers = (MARK_SUCCESS, MARK_REDIRECT, MARK_FORBIDDEN, MARK_OTHER)
