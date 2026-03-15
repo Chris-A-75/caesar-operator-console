@@ -1,0 +1,11 @@
+{
+    "name": "mercator",
+    "description": "Mercator crt.sh certificate transparency subdomain enumerator",
+    "entry": "mercator.py",
+    "options": {
+        "TARGET": {
+            "required": true
+        }
+    },
+    "argument_order": ["TARGET"]
+}
