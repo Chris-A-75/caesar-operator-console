@@ -1,0 +1,17 @@
+{
+    "name": "turing",
+    "description": "Turing web technology fingerprinting tool",
+    "entry": "turing.py",
+    "options": {
+        "TARGET": {
+            "required": true
+        },
+        "PORT": {
+            "required": true,
+            "type": "integer",
+            "min": 1,
+            "max": 65535
+        }
+    },
+    "argument_order": ["TARGET", "PORT"]
+}
